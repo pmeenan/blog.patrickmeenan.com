@@ -1,0 +1,170 @@
+---
+import '../styles/global.css';
+
+export interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+}
+
+const { title, description = "A technical blog by Patrick Meenan", image = "/default-og.jpg" } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://blog.patrickmeenan.com');
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    
+    <!-- Open Graph / Meta tags -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content={new URL(image, canonicalURL)} />
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(image, canonicalURL)} />
+  </head>
+  <body class="min-h-screen flex flex-col relative text-slate-800 dark:text-slate-300">
+    <header class="w-full bg-white/90 dark:bg-slate-950/90 shadow-sm border-b border-slate-200 dark:border-slate-800 sticky top-0 z-40 transition-colors duration-300 backdrop-blur-md">
+      <div class="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
+        <a href="/" class="text-2xl font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 hover:no-underline">
+          Patrick Meenan
+        </a>
+        <nav class="flex gap-4">
+          <a href="/" class="font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Home</a>
+          <a href="/archive" class="font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Archive</a>
+          <a href="/about" class="font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">About</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl mx-auto w-full px-6 py-12">
+      <slot />
+    </main>
+
+    <footer class="w-full border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 py-8 mt-12 transition-colors duration-300">
+      <div class="max-w-4xl mx-auto px-6 text-center text-slate-500 dark:text-slate-500 text-sm">
+        <p>&copy; {new Date().getFullYear()} Patrick Meenan. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <!-- Native HTML Dialog used as a Lightbox -->
+    <dialog id="lightbox" class="p-0 border-0 bg-transparent m-auto overflow-visible backdrop:bg-black/80 dark:backdrop:bg-black/90 backdrop:backdrop-blur-sm">
+      <div class="relative inline-flex justify-center items-center">
+        <!-- Close button -->
+        <button id="lightbox-close" class="absolute -top-4 -right-4 bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-full p-2 shadow-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors z-50 text-xl font-bold leading-none w-10 h-10 flex items-center justify-center cursor-pointer" aria-label="Close Lightbox">&times;</button>
+        <img id="lightbox-img" src="" alt="Enlarged view" class="max-w-[calc(100vw-3rem)] max-h-[calc(100vh-3rem)] object-contain rounded-lg shadow-2xl cursor-zoom-out" />
+      </div>
+    </dialog>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const dialog = document.getElementById('lightbox') as HTMLDialogElement;
+        const dialogImg = document.getElementById('lightbox-img') as HTMLImageElement;
+        const closeBtn = document.getElementById('lightbox-close');
+
+        // Add correct selector to target markdown images but exclude the dialog image itself
+        const proseImages = document.querySelectorAll('.prose img:not(#lightbox-img)');
+        
+        const setupImg = (element: Element) => {
+          const img = element as HTMLImageElement;
+          if (img.naturalWidth > img.clientWidth) {
+            img.classList.add('cursor-zoom-in');
+            img.style.cursor = '';
+            img.onclick = (e) => {
+              dialogImg.src = img.src;
+              if (img.alt) dialogImg.alt = img.alt;
+              dialog.showModal();
+            };
+          } else {
+            img.classList.remove('cursor-zoom-in');
+            img.style.cursor = 'default';
+            img.onclick = null;
+          }
+        };
+
+        proseImages.forEach((img) => {
+          const imageEl = img as HTMLImageElement;
+          if (imageEl.complete) {
+            setupImg(imageEl);
+          } else {
+            imageEl.addEventListener('load', () => setupImg(imageEl));
+          }
+        });
+
+        window.addEventListener('resize', () => {
+          proseImages.forEach((img) => {
+            const imageEl = img as HTMLImageElement;
+            if (imageEl.complete) setupImg(imageEl);
+          });
+        });
+
+        const closeDialog = () => {
+          dialog.close();
+        };
+
+        closeBtn?.addEventListener('click', closeDialog);
+        
+        // Close on clicking backdrop
+        dialog?.addEventListener('click', (e) => {
+          if (e.target === dialog) {
+            closeDialog();
+          }
+        });
+        
+        // Close on clicking the image itself inside lightbox
+        dialogImg?.addEventListener('click', closeDialog);
+
+        // Add Copy Button to Code Blocks
+        const preBlocks = document.querySelectorAll('.prose pre');
+        preBlocks.forEach((pre) => {
+          // If it happens to be mermaid or already wrapped, skip
+          if (pre.classList.contains('mermaid') || pre.parentElement?.classList.contains('code-block-wrapper')) return;
+
+          const wrapper = document.createElement('div');
+          wrapper.className = 'relative group code-block-wrapper mb-8';
+          
+          pre.parentNode?.insertBefore(wrapper, pre);
+          wrapper.appendChild(pre);
+          pre.style.marginBottom = '0'; // Move the margin to the wrapper
+
+          const button = document.createElement('button');
+          button.className = 'absolute top-3 right-3 w-8 h-8 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity bg-slate-700/80 hover:bg-slate-600 dark:bg-slate-800/80 dark:hover:bg-slate-700 text-slate-200 rounded flex items-center justify-center shadow-sm';
+          button.setAttribute('aria-label', 'Copy code');
+          button.title = 'Copy code';
+          
+          const svgCopy = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
+          const svgCheck = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+          
+          button.innerHTML = svgCopy;
+          
+          button.addEventListener('click', async () => {
+            const codeEl = pre.querySelector('code');
+            const codeText = codeEl ? codeEl.innerText : pre.innerText;
+            try {
+              await navigator.clipboard.writeText(codeText);
+              button.innerHTML = svgCheck;
+              setTimeout(() => {
+                button.innerHTML = svgCopy;
+              }, 2000);
+            } catch (err) {
+              console.error('Failed to copy code: ', err);
+            }
+          });
+          
+          wrapper.appendChild(button);
+        });
+      });
+    </script>
+  </body>
+</html>

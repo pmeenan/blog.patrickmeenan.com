@@ -1,17 +1,63 @@
 ---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
 
+const posts = await getCollection('blog');
+posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const recentPosts = posts.slice(0, 3);
+
+// Render the content for the recent posts
+const renderedPosts = await Promise.all(
+  recentPosts.map(async (post) => {
+    const { Content } = await post.render();
+    return { ...post, Content };
+  })
+);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title="Patrick Meenan's Blog">
+  <div class="mb-14">
+    <div class="bg-blue-50 dark:bg-slate-800/50 border border-blue-100 dark:border-slate-700/50 rounded-2xl p-6 sm:p-8 mb-12 shadow-sm">
+      <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-3">Welcome!</h2>
+      <p class="text-lg text-slate-700 dark:text-slate-300 leading-relaxed">
+        This is my personal blog and mostly contains my random thoughts about web performance, development, browsers or whatever else I might be thinking about at the time.
+      </p>
+    </div>
+    
+    <h1 class="text-4xl font-extrabold tracking-tight">Latest Posts</h1>
+  </div>
+
+  <div class="space-y-16">
+    {renderedPosts.map((post) => (
+      <article class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 sm:p-10 shadow-sm relative">
+        <header class="mb-8">
+          <time class="text-sm font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-3 block">
+            {post.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+          </time>
+          <a href={`/${post.slug}`} class="hover:underline">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-4 text-slate-900 dark:text-white transition-colors">
+              {post.data.title}
+            </h2>
+          </a>
+          <div class="w-16 h-1 bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 rounded-full mb-6"></div>
+        </header>
+
+        <div class="prose dark:prose-invert prose-blue max-w-none">
+          <post.Content />
+        </div>
+
+        <div class="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800">
+          <a href={`/${post.slug}`} class="text-blue-600 dark:text-blue-400 font-medium inline-flex items-center hover:text-blue-800 dark:hover:text-blue-300 transition-colors">
+            Permalink <span class="ml-2">→</span>
+          </a>
+        </div>
+      </article>
+    ))}
+  </div>
+
+  <div class="mt-16 text-center">
+    <a href="/archive" class="inline-flex items-center px-8 py-4 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-full font-bold text-lg hover:bg-blue-600 dark:hover:bg-blue-400 transition-colors shadow-md hover:shadow-lg">
+      View All Posts in Archive
+    </a>
+  </div>
+</Layout>

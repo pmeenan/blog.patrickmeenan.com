@@ -1,0 +1,104 @@
+@import "tailwindcss";
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-300 antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-bold text-slate-900 dark:text-white tracking-tight;
+  }
+
+  a {
+    @apply text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors;
+  }
+
+  /* Prose customizations for markdown */
+  .prose {
+    @apply max-w-none text-lg leading-relaxed;
+  }
+
+  .prose p {
+    @apply mb-6;
+  }
+
+  .prose h1 {
+    @apply text-4xl mt-12 mb-6;
+  }
+
+  .prose h2 {
+    @apply text-3xl mt-10 mb-5;
+  }
+
+  .prose h3 {
+    @apply text-2xl mt-8 mb-4;
+  }
+
+  .prose h4 {
+    @apply text-xl mt-6 mb-3;
+  }
+
+  .prose code {
+    @apply bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded text-sm font-mono text-pink-600 dark:text-pink-400;
+  }
+
+  .prose pre {
+    @apply rounded-xl p-5 overflow-x-auto shadow-md border border-slate-200 dark:border-slate-800;
+    background-color: var(--shiki-light-bg, #f8fafc) !important;
+    color: var(--shiki-light, inherit) !important;
+  }
+
+  .prose pre code {
+    @apply bg-transparent text-inherit p-0;
+  }
+
+  .prose pre span {
+    color: var(--shiki-light, inherit);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .prose pre {
+      background-color: var(--shiki-dark-bg, #0f172a) !important;
+      color: var(--shiki-dark, inherit) !important;
+    }
+
+    .prose pre span {
+      color: var(--shiki-dark, inherit) !important;
+    }
+  }
+
+  .prose img {
+    @apply rounded-xl max-w-full h-auto shadow-md hover:shadow-xl transition-all duration-300 mt-8 mb-0 mx-auto border border-slate-200 dark:border-slate-800;
+  }
+
+  .prose blockquote {
+    @apply border-l-4 border-blue-500 pl-5 py-1 text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-900/50 rounded-r-lg my-8;
+  }
+
+  .prose ul,
+  .prose ol {
+    @apply mb-6 pl-6 space-y-2;
+  }
+
+  .prose ul {
+    @apply list-disc;
+  }
+
+  .prose ol {
+    @apply list-decimal;
+  }
+
+  .prose hr {
+    @apply my-10 border-slate-200 dark:border-slate-800;
+  }
+}

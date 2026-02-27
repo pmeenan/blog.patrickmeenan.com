@@ -1,0 +1,62 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog');
+posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+// Group posts by Year, then by Month
+interface GroupedPosts {
+  [year: string]: {
+    [month: string]: typeof posts;
+  };
+}
+
+const grouped: GroupedPosts = {};
+for (const post of posts) {
+  const d = post.data.date;
+  const year = d.getFullYear().toString();
+  const month = d.toLocaleDateString('en-US', { month: 'long' });
+  
+  if (!grouped[year]) grouped[year] = {};
+  if (!grouped[year][month]) grouped[year][month] = [];
+  
+  grouped[year][month].push(post);
+}
+
+const sortedYears = Object.keys(grouped).sort((a, b) => Number(b) - Number(a));
+---
+
+<Layout title="Archive - Patrick Meenan's Blog">
+  <div class="mb-12">
+    <h1 class="text-4xl font-extrabold tracking-tight mb-4">Archive</h1>
+    <p class="text-xl text-slate-500 dark:text-slate-400">All posts from the beginning of time.</p>
+  </div>
+
+  <div class="space-y-16">
+    {sortedYears.map(year => (
+      <section>
+        <h2 class="text-3xl font-bold mb-8 text-slate-800 dark:text-slate-200 border-b border-slate-200 dark:border-slate-800 pb-4">{year}</h2>
+        <div class="space-y-10">
+          {Object.keys(grouped[year]).map(month => (
+            <div>
+              <h3 class="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 uppercase tracking-widest text-sm">{month}</h3>
+              <ul class="space-y-4">
+                {grouped[year][month].map(post => (
+                  <li class="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-6 group">
+                    <time class="text-sm font-medium text-slate-500 dark:text-slate-500 min-w-[120px]">
+                      {post.data.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </time>
+                    <a href={`/${post.slug}`} class="text-lg font-medium text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                      {post.data.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+</Layout>
