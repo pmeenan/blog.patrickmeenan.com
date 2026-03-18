@@ -3,7 +3,7 @@ title: "The Coming Software Revolution"
 date: 2026-03-18T10:55:00.001-04:00
 ---
 
-The actual writing of code hasn't been the bulk of development for a while, particularly in larger companies with larger codebases and existing users. The more existing users there are, the more process there tends to be around protections and procedures to make sure you aren't breaking existing behaviors, risking security (or press) or causing regressions in some random metric that was added to the launch process at some point in the life of the product.
+The actual writing of code hasn't been the bulk of development for a while, particularly in larger companies with larger codebases and existing users. The more existing users there are, the more process there tends to be around protections and procedures. These exist to ensure you aren't breaking existing behaviors, risking security (or press), or causing regressions in some random metric added to the launch process over the product's lifetime.
 
 This is all in place for a good reason but it also significantly reduces the velocity of development for the product involved. For extremely complex products (like, say, a web browser) this isn't necessarily a risk to the product itself because the ROI for a new competitor to build a full browser from scratch has been astronomical. This is why there has been so much consolidation in browser engines and why most new "browsers" are just reskinned versions of Chromium.
 
@@ -24,7 +24,7 @@ A clean-sheet web browser is a perfect candidate for being built with AI:
 
 If you are getting into the market or need a web rendering engine for your product (embedded or otherwise), are you better off building a new one from scratch that is purpose-built for your needs or trying to shoehorn an existing engine into your product?
 
-I'd hazard a guess that for most use cases the answer is now (or will soon be) "build a new one from scratch".
+I'd hazard a guess that for most use cases the answer is now (or will soon be) **"build a new one from scratch"**.
 
 ## What would be involved in building a new web browser?
 
@@ -34,7 +34,10 @@ Browsers have some pretty clear components that basically stand-alone and have w
 
 For the most part, you can break each of those pieces into a stand-alone project once the interfaces are defined and iterate on building them independently.
 
-For each of the components, you can iterate on an implementation with an LLM, probably somewhat autonomously with a feedback loop based on the huge corpus of existing tests. You'd probably start by building isolated tests for each of the existing engines to use as a point of comparison.
+For each component, you can iterate on an implementation with an LLM autonomously:
+- Define the interfaces to other parts of the system.
+- Build isolated tests against existing engines to use as a baseline point of comparison.
+- Use the huge corpus of existing tests as an automated feedback loop.
 
 ## Built for your needs
 
@@ -64,4 +67,4 @@ My guess is you could easily build a browser that is twice as fast as the curren
 
 ## Not just browsers
 
-This largely holds for any large software project that has an existing large user base. The barrier to entry for building a new implementation that is purpose-built has dropped significantly and the risks of "process" slowing down development are going to become a huge problem for existing players in a lot of markets.
+This largely holds for any large software project that has an existing large user base. The barrier to entry for building a new implementation that is purpose-built has dropped significantly, and the risks of "process" slowing down development are going to become a huge problem for existing players in a lot of markets. If your company relies on its massive, legacy codebase as a moat, it might be time to start digging a new one.
