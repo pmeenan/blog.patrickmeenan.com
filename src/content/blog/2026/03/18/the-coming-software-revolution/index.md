@@ -7,7 +7,7 @@ The actual writing of code hasn't been the bulk of development for a while, part
 
 This is all in place for a good reason but it also significantly reduces the velocity of development for the product involved. For extremely complex products (like, say, a web browser) this isn't necessarily a risk to the product itself because the ROI for a new competitor to build a full browser from scratch has been astronomical. This is why there has been so much consolidation in browser engines and why most new "browsers" are just reskinned versions of Chromium.
 
-That has all changed in the last year or so as LLM's have gotten much better at writing code.
+That has all changed in the last year or so as LLMs have gotten much better at writing code.
 
 ## Web browsers are prime candidates for disruption
 
@@ -34,7 +34,7 @@ Browsers have some pretty clear components that basically stand-alone and have w
 
 For the most part, you can break each of those pieces into a stand-alone project once the interfaces are defined and iterate on building them independently.
 
-For each of the components, you can iterate on an implementation with a LLM, probably somewhat autonomiously with a feedback loop based on the huge corpus of existing tests. You'd probably start by puilding isolated tests for each of the existing engines to use as a point of comparison.
+For each of the components, you can iterate on an implementation with an LLM, probably somewhat autonomously with a feedback loop based on the huge corpus of existing tests. You'd probably start by building isolated tests for each of the existing engines to use as a point of comparison.
 
 ## Built for your needs
 
@@ -46,7 +46,7 @@ You can target specific architecture assumptions without the legacy baggage of s
 
 - You could require a hardware GPU with a minimum feature set and eliminate the software rendering path entirely. 
 - You could target modern CPU architectures with SIMD support.
-- You could target operating systems with specific isolation an memory safety features.
+- You could target operating systems with specific isolation and memory safety features.
 
 You can also strip out all of the features that don't make sense for your use case:
 

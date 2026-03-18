@@ -20,6 +20,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://blog.pat
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL} />
     <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="alternate" type="application/atom+xml" title="Patrick Meenan's Blog" href={new URL("atom.xml", Astro.site || 'https://blog.patrickmeenan.com')} />
     
     <!-- Open Graph / Meta tags -->
     <meta property="og:title" content={title} />
