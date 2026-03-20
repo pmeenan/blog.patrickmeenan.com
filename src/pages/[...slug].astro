@@ -33,16 +33,8 @@ const formattedDate = post.data.date.toLocaleDateString('en-US', {
 const summary = remarkPluginFrontmatter?.summary || `Post from ${formattedDate}`;
 let imageUrl = remarkPluginFrontmatter?.heroImage;
 
-if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
-  // Resolve path relative to the post file
-  const postDir = post.id.includes('/') ? post.id.replace(/\/[^/]+$/, '') : '';
-  const resolvedPath = postDir 
-    ? `/src/content/blog/${postDir}/${imageUrl.replace(/^.\//, '')}`
-    : `/src/content/blog/${imageUrl.replace(/^.\//, '')}`;
-  
-  if (allImages[resolvedPath]) {
-    imageUrl = (allImages[resolvedPath] as any).default.src;
-  }
+if (imageUrl) {
+  imageUrl = `/og/${post.slug}.png`;
 }
 ---
 
