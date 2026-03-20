@@ -57,7 +57,7 @@ function removeLazyLoadingIntegration() {
         for (const file of htmlFiles) {
           let content = fs.readFileSync(file, 'utf8');
           if (content.includes('loading="lazy"')) {
-            content = content.replace(/loading="lazy"/g, 'loading="eager"');
+            content = content.replace(/loading="lazy"/, 'loading="eager"');
             fs.writeFileSync(file, content, 'utf8');
           }
         }
