@@ -7,7 +7,7 @@ Should we ship jQuery, React and other popular frameworks with browsers so sites
 
 ## Some background
 
-For years, web performance advocates have casually suggested that browsers should "just ship jQuery" or other popular frameworks to avoid the need for every site to force users to re-download identical library code (there's a recent WHATWG discussion on it [here](https://github.com/whatwg/html/issues/239)). 
+For years, web performance advocates have casually suggested that browsers should "just ship jQuery" or other popular frameworks to avoid the need for every site to force users to re-download identical library code (there's a recent WHATWG discussion on it [here](https://github.com/whatwg/html/issues/11376)). 
 
 However, this concept has historically faced several fundamental hurdles.
 
