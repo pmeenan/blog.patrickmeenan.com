@@ -41,6 +41,6 @@ export function remarkExtractMetadata() {
     file.data.astro = file.data.astro || {};
     file.data.astro.frontmatter = file.data.astro.frontmatter || {};
     file.data.astro.frontmatter.summary = summary;
-    file.data.astro.frontmatter.heroImage = firstImage;
+    file.data.astro.frontmatter.heroImage = file.data.astro.frontmatter.heroImage || firstImage;
   };
 }

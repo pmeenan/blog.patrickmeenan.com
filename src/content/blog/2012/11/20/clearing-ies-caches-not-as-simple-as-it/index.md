@@ -54,19 +54,9 @@ IE 10 introduced another cache where it keeps track of the different domains tha
 
   
 
-When I was testing out the IE 10 implementation the very first run of a given URL would look as you would expect (ignore the really long DNS times - that's just an artifact of my dev VM):
+When I was testing out the IE 10 implementation, the very first run of a given URL would perform standard DNS and connection lookups (ignore the really long DNS times - that's just an artifact of my dev VM).
 
-  
-
-[![](http://www.webpagetest.org/thumbnail.php?test=121115_EK_e2ef9c54bb4a0600f13729ca28f48908&run=1&file=1_waterfall.png)](http://www.webpagetest.org/thumbnail.php?test=121115_EK_e2ef9c54bb4a0600f13729ca28f48908&run=1&file=1_waterfall.png)
-
-  
-
-But EVERY subsequent test for the same URL, even across manual cache clears, system reboots, etc would look like this:
-
-  
-
-[![](http://www.webpagetest.org/thumbnail.php?test=121115_EK_e2ef9c54bb4a0600f13729ca28f48908&run=3&file=3_waterfall.png)](http://www.webpagetest.org/thumbnail.php?test=121115_EK_e2ef9c54bb4a0600f13729ca28f48908&run=3&file=3_waterfall.png)
+But EVERY subsequent test for the same URL, even across manual cache clears, system reboots, etc. would show instantaneous connections as the browser pre-connected using the cached heuristics.
 
   
 
