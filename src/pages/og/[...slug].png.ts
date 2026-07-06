@@ -1,4 +1,4 @@
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
@@ -6,27 +6,22 @@ import sharp from 'sharp';
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
   return posts.map(post => ({
-    params: { slug: post.slug },
+    params: { slug: post.id },
     props: { post },
   }));
 }
 
 export async function GET({ props }: any) {
   const { post } = props;
-  const { remarkPluginFrontmatter } = await post.render();
+  const { remarkPluginFrontmatter } = await render(post);
   let heroImage = remarkPluginFrontmatter?.heroImage;
   
   if (!heroImage) {
     return new Response(null, { status: 404 });
   }
 
-  // Resolve the image path
-  const postDir = post.id.includes('/') ? post.id.replace(/\/[^/]+$/, '') : '';
-  const resolvedPath = postDir 
-    ? `src/content/blog/${postDir}/${heroImage.replace(/^.\//, '')}`
-    : `src/content/blog/${heroImage.replace(/^.\//, '')}`;
-
-  const absolutePath = path.resolve(process.cwd(), resolvedPath);
+  // Resolve the image path using post.filePath
+  const absolutePath = path.resolve(process.cwd(), path.dirname(post.filePath), heroImage);
 
   try {
     const imageBuffer = await fs.readFile(absolutePath);

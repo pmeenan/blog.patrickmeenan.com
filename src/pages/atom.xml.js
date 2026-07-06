@@ -33,7 +33,7 @@ export async function GET(context) {
     });
 
     posts.forEach(post => {
-        const url = `${baseUrl}/${post.slug}`;
+        const url = `${baseUrl}/${post.id}`;
 
         // Parse the raw markdown into HTML and safely sanitize it
         const htmlContent = sanitizeHtml(parser.render(post.body), {

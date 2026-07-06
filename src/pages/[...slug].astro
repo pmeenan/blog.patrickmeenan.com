@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 
 const allImages = import.meta.glob('/src/content/blog/**/*.{jpeg,jpg,png,gif,webp,svg}', { eager: true });
 
@@ -11,7 +11,7 @@ export async function getStaticPaths() {
   return posts.map((post, index) => {
     return {
       // The slug generated matches the folder structure YYYY/MM/DD/post-slug
-      params: { slug: post.slug },
+      params: { slug: post.id },
       props: {
         post,
         prevPost: index > 0 ? posts[index - 1] : null,
@@ -22,7 +22,7 @@ export async function getStaticPaths() {
 }
 
 const { post, prevPost, nextPost } = Astro.props;
-const { Content, remarkPluginFrontmatter } = await post.render();
+const { Content, remarkPluginFrontmatter } = await render(post);
 
 const formattedDate = post.data.date.toLocaleDateString('en-US', {
   year: 'numeric',
@@ -34,7 +34,7 @@ const summary = remarkPluginFrontmatter?.summary || `Post from ${formattedDate}`
 let imageUrl = remarkPluginFrontmatter?.heroImage;
 
 if (imageUrl) {
-  imageUrl = `/og/${post.slug}.png`;
+  imageUrl = `/og/${post.id}.png`;
 }
 ---
 
@@ -61,14 +61,14 @@ if (imageUrl) {
     <!-- Next / Prev Navigation -->
     <nav class="mt-20 pt-10 border-t border-slate-200 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-2 gap-8">
       {prevPost ? (
-        <a href={`/${prevPost.slug}`} class="group flex flex-col items-start p-6 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl hover:border-blue-500 dark:hover:border-blue-400 transition-colors">
+        <a href={`/${prevPost.id}`} class="group flex flex-col items-start p-6 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl hover:border-blue-500 dark:hover:border-blue-400 transition-colors">
           <span class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide group-hover:text-blue-600 dark:group-hover:text-blue-400">← Previous Post</span>
           <span class="text-lg font-bold text-slate-800 dark:text-slate-200">{prevPost.data.title}</span>
         </a>
       ) : <div />}
       
       {nextPost ? (
-        <a href={`/${nextPost.slug}`} class="group flex flex-col items-end text-right p-6 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl hover:border-blue-500 dark:hover:border-blue-400 transition-colors">
+        <a href={`/${nextPost.id}`} class="group flex flex-col items-end text-right p-6 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl hover:border-blue-500 dark:hover:border-blue-400 transition-colors">
           <span class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide group-hover:text-blue-600 dark:group-hover:text-blue-400">Next Post →</span>
           <span class="text-lg font-bold text-slate-800 dark:text-slate-200">{nextPost.data.title}</span>
         </a>
