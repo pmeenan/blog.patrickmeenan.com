@@ -51,7 +51,7 @@ The features and tech decisions are being tracked [here](https://github.com/pmee
 
 Some of the things I want to exercise go beyond what you normally see in an open-world game and will be leveraging the new AI-backed features in Chrome for some of them:
 
-* **NPC Chat**: I'll be leveraging the [Prompt API](https://developer.chrome.com/docs/ai/prompt-api) to have NPCs in the world that can actually hold conversations with players (and will be experimenting with how far that can go). The hope is to create a dynamic world where conversations can have impact (beyond just simple fetch quests). It will make it harder to tell NPC's apart from game characters (intentionally) and it could lead to some interesting open-ended conversations. The NPC's could be seeded with knowledge of when they last crossed paths with someone the player is looking for and a backstory and it would be up to the players to ask the right questions. Flashbacks to Zork!
+* **NPC Chat**: I'll be leveraging LLM's to have NPCs in the world that can actually hold conversations with players (and will be experimenting with how far that can go). The hope is to create a dynamic world where conversations can have impact (beyond just simple fetch quests). It will make it harder to tell NPC's apart from game characters (intentionally) and it could lead to some interesting open-ended conversations. The NPC's could be seeded with knowledge of when they last crossed paths with someone the player is looking for and a backstory and it would be up to the players to ask the right questions. Flashbacks to Zork! I'm going to explore both training a custom model with the game lore and NPC backgrounds and leveraging the [Prompt API](https://developer.chrome.com/docs/ai/prompt-api) to see which pathe works best.
 
 * **Voice Conversations**: The [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API) gives us both speech recognition and text-to-speech (though the voice set is limiting). I'm planning to experiment with how much we can leverage the engine for a more natural conversational experience.
 
@@ -95,6 +95,16 @@ This is a workflow that has worked really well for me so far.
 I'm sure I could wire up a harness to automate the cycles across the agents but I like staying in the loop, making judgement calls and pushing back as needed. If I just automated it and let it go, I'd just get whatever slop they all agreed to call done.
 
 I also usually watch the thinking traces (what they are anyway these days) to make sure I don't need to interrupt it and correct some assumptions it is making.
+
+## Cross-browser?
+
+To the extent that it is possible, I am going to try to keep things cross-browser and only go Chrome-specific if it is unavoidable (without compromising quality). Some of the AI features may be Chrome-only but those can be implemented as progressive enhancements (like auto-translation and voice).
+
+The two areas where I'm expecting to bumpt into challenges are different for Safari and Firefox:
+
+**Safari**: Doesn't implement wasm64 yet so if I need more than 4GB of RAM in any of the wasm threads it will break safari support. I'll try to avoid it but if it proves impossible, at least it will provide good feedback to the Safari team.
+
+**Firefox**: May be a problem for local storage. As far as I can tell, the limits on the amount of storage you can use are a lot lower than Chrome and Safari. If that holds true, a demo or the smaller world might be viable but a full game will have issues.
 
 ## Doomed to fail?
 
