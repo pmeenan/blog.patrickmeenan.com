@@ -9,23 +9,21 @@ Should we ship jQuery, React and other popular frameworks with browsers so sites
 
 For years, web performance advocates have casually suggested that browsers should "just ship jQuery" or other popular frameworks to avoid the need for every site to force users to re-download identical library code (there's a recent WHATWG discussion on it [here](https://github.com/whatwg/html/issues/11376)). 
 
-However, this concept has historically faced several fundamental hurdles.
+It has never really been practical though, for a few reasons:
 
-First, there is a massive variety of framework versions in active use across the web, making it almost impossible to select a single "canonical" version.
-
-Second, sites must be able to react quickly to security vulnerabilities, and being "locked" to a browser-shipped version could seriously hinder necessary updates.
-
-Finally, these frameworks are served from a wide array of domains and are frequently bundled with site-specific code, which completely breaks simple URL-based caching.
+- There is a massive variety of framework versions in active use across the web, making it almost impossible to select a single "canonical" version.
+- Sites need to be able to react quickly to security vulnerabilities and being "locked" to a browser-shipped version could seriously hinder necessary updates.
+- The frameworks are served from a wide array of domains and are frequently bundled with site-specific code, which completely breaks simple URL-based caching.
 
 ## Proposal: A Web-Wide Compression Dictionary
 
 [Compression dictionary transport](https://www.rfc-editor.org/rfc/rfc9842.html) brings an interesting possible solution to this problem. Instead of shipping raw library binaries, we could ship a versioned compression dictionary (e.g., a "2026 web" dictionary) that includes common frameworks like React and jQuery. This is basically the modern alternative to the old "Built-In Web Libraries" approach.
 
-Unlike the whole bundling approach—which struggled with the sheer variety of library versions and the risk of making certain versions "sticky" and slowing down security updates—a compression dictionary provides a wonderfully transparent mechanism. It allows servers to compress their unique resource bundles against the shared dictionary, gaining cross-site sharing benefits without requiring developers to change their HTML or worrying about being locked into a specific binary version. The dictionary natively supports versioning and avoids the privacy risks or other concerns associated with traditional shared library caching schemes.
+Unlike the whole bundling approach (which struggled with the sheer variety of library versions and the risk of making certain versions "sticky" and slowing down security updates), a compression dictionary is completely transparent to the site. Servers compress their unique resource bundles against the shared dictionary and get the cross-site sharing benefits without developers having to change their HTML or worry about being locked into a specific binary version. The dictionary natively supports versioning and avoids the privacy risks or other concerns associated with traditional shared library caching schemes.
 
-Since libraries tend to change pretty incrementally over time, a single version of jQuery, React, or other commonly used code can actually compress other versions of the same library really well, eliminating the need to match a site’s specific version.
+Since libraries tend to change pretty incrementally over time, a single version of jQuery, React, or other commonly used code can actually compress other versions of the same library really well, eliminating the need to match a site's specific version.
 
-Even better, the proposal leverages the existing Compression Dictionary Transport mechanism and the `Available-Dictionary` request header for seamless backward compatibility and easy deployment. The browser would just advertise the web-wide dictionary as being available when a better, content-specific dictionary is not.
+It also builds on the existing Compression Dictionary Transport mechanism and the `Available-Dictionary` request header so it is backwards-compatible and easy to deploy. The browser would just advertise the web-wide dictionary as being available when a better, content-specific dictionary is not.
 
 ## Methodology: Building the Dictionary
 
@@ -33,9 +31,9 @@ So how do we build it? The 50MB dictionary was constructed by analyzing massive 
 
 *(The code for generating and testing the dictionary is up on Github in the [web-dictionary](https://github.com/pmeenan/web-dictionary) project).*
 
-We counted the unique occurrences of those hashes across different URLs and pulled the script chunks that were seen on at least 10,000 different URLs. That yielded around 10,300 highly pervasive script or comment blocks. A deduplication pass was then used to ensure that similar functions—such as those across different versions of the same library—were compressed against each other. This was purely to minimize the dictionary size while maximizing utility. The [resulting dictionary](https://github.com/pmeenan/web-dictionary/raw/refs/heads/main/data/202603.dict) is around 50MB and works with both Brotli and ZStandard.
+We counted the unique occurrences of those hashes across different URLs and pulled the script chunks that were seen on at least 10,000 different URLs. That yielded around 10,300 highly pervasive script or comment blocks. A deduplication pass then made sure that similar functions (such as those across different versions of the same library) were compressed against each other. This was purely to minimize the dictionary size while maximizing utility. The [resulting dictionary](https://github.com/pmeenan/web-dictionary/raw/refs/heads/main/data/202603.dict) is around 50MB and works with both Brotli and ZStandard.
 
-The tested dictionary contains a lot of the typical boilerplate copyright blocks as well as the frameworks you’d normally expect to see out there (jQuery, jQueryUI, React, Preact, Angular, etc.), plus a lot of underlying code that is widely reused.
+The tested dictionary contains a lot of the typical boilerplate copyright blocks as well as the frameworks you'd normally expect to see out there (jQuery, jQueryUI, React, Preact, Angular, etc.), plus a lot of underlying code that is widely reused.
 
 ## Methodology: Testing the Dictionary
 
@@ -63,7 +61,7 @@ Here's how the savings looked:
 
 ## Conclusion
 
-While the inclusion of a 50MB framework dictionary does offer some really great compression benefits—particularly for HTML and certain classes of scripts—the overall conclusion is that it's just not yet worth the effort right now.
+While the inclusion of a 50MB framework dictionary does offer some really great compression benefits (particularly for HTML and certain classes of scripts), the overall conclusion is that it's just not worth the effort right now.
 
 Managing a 50MB static dictionary on every single client device and growing adoption of server-side compression with the same dictionary is a fairly long and drawn-out process.
 

@@ -2,8 +2,6 @@
 import Layout from '../layouts/Layout.astro';
 import { getCollection, render } from 'astro:content';
 
-const allImages = import.meta.glob('/src/content/blog/**/*.{jpeg,jpg,png,gif,webp,svg}', { eager: true });
-
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
   posts.sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf());

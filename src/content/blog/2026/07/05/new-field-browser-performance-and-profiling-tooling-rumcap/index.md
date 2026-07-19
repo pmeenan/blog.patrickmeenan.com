@@ -4,21 +4,21 @@ date: 2026-07-05T18:07:12.000-04:00
 heroImage: "./devtools-view.png"
 ---
 
-Ever since browser vendors started exposing advanced performance telemetry APIs directly to the page, like the [Performance Timeline](https://developer.mozilla.org/en-US/docs/Web/API/PerformanceTimeline), [Long Animation Frames (LoAF)](https://developer.mozilla.org/en-US/docs/Web/API/Long_Animation_Frame_Timing_API), and the [JS Self-Profiling API](https://developer.mozilla.org/en-US/docs/Web/API/JS_Self-Profiling_API), I’ve been waiting for tooling that could capture, store, and visualize all of this data in the wild. We can gather incredibly detailed information about what is happening on a user's machine, but adoption of the profiling side of things has been pretty light from what I can tell (and the lack of tooling doesn't help).
+Ever since browser vendors started exposing advanced performance telemetry APIs directly to the page, like the [Performance Timeline](https://developer.mozilla.org/en-US/docs/Web/API/PerformanceTimeline), [Long Animation Frames (LoAF)](https://developer.mozilla.org/en-US/docs/Web/API/Long_Animation_Frame_Timing_API), and the [JS Self-Profiling API](https://developer.mozilla.org/en-US/docs/Web/API/JS_Self-Profiling_API), I've been waiting for tooling that could capture, store, and visualize all of this data in the wild. We can gather incredibly detailed information about what is happening on a user's machine, but adoption of the profiling side of things has been pretty light from what I can tell (and the lack of tooling doesn't help).
 
 When I introduced [Waterfall Tools](https://waterfall-tools.com/) a few months ago, the goal was to build a client-based canvas rendering engine for synthetic test waterfalls. But it also laid the groundwork for a field-data viewer. We just needed a way to package, compress, and feed that data into it.
 
-Today, I’m excited to introduce **rumcap**: a file format and helper library designed specifically to collect, compress, and visualize RUM performance data.
+So that's what I built. Say hello to **rumcap**: a file format and helper library for collecting, compressing, and visualizing RUM performance data.
 
 ## Half the Size of Gzipped JSON
 
-Besides just be a well-defined way to faormat the data for consumption, the main benefit of `rumcap` is its compression efficiency. 
+Besides just being a well-defined way to format the data for consumption, the main benefit of `rumcap` is how well it compresses.
 
 When you capture raw performance timelines, resource entries, call stacks, and JS profile samples, the raw data is highly repetitive. You have the same domains, similar resource paths, repeated function names, and overlapping execution call stacks. If you just grab these events as JSON and gzip them, you still end up with relatively large payloads.
 
 `rumcap` serializes the data into an extensible binary format that is optimized to compress well (and gzip compression is applied as part of the packaging). 
 
-The result? A `.rumcap` binary file is typically **half the size of the equivalent raw events gzipped**. By profiling standards, the files are tiny, making rich telemetry viable for real-user monitoring (in the neighborhood of 10 KB for a typical page view with full request data and JS self-profiling enabled).
+The result is a `.rumcap` binary file that is typically **half the size of the equivalent raw events gzipped**. By profiling standards the files are tiny (in the neighborhood of 10 KB for a typical page view with full request data and JS self-profiling enabled), making rich telemetry viable for real-user monitoring.
 
 ## Visualization In Waterfall Tools
 
@@ -36,7 +36,7 @@ To support this new format, `waterfall-tools` has been updated with native `rumc
 
 ![Perfetto View](./perfetto-view.png "An embedded Perfetto trace view of the JS profile, request data and other timing events.")
 
-If your profile includes JS self-profiling data, you can view the call stack flame charts side-by-side with resource requests and LoAF blocks to instantly identify what script blocked the thread. Additionally, it supports [User Timing marks and measures](https://developer.mozilla.org/en-US/docs/Web/API/User_Timing_API), as well as custom stacked event durations so you can map your own trace instrumentation into the timeline.
+If your profile includes JS self-profiling data, you can view the call stack flame charts side-by-side with resource requests and LoAF blocks to see exactly what script blocked the thread. It also supports [User Timing marks and measures](https://developer.mozilla.org/en-US/docs/Web/API/User_Timing_API), as well as custom stacked event durations so you can map your own trace instrumentation into the timeline.
 
 ## What rumcap is NOT (and What it is)
 
