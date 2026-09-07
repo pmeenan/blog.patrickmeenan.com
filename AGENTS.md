@@ -4,7 +4,9 @@ This file serves as a memory for AI assistants to maintain consistency across fu
 
 ## Tech Stack
 * **Framework**: [Astro](https://astro.build/)
-* **Deployment**: Uses a custom build/deploy script (`deploy.sh`) to build the site and sync it to the production server.
+* **Deployment**: Deployments sync the built site to the production server (`pmeenan@plex:/var/www/blog.patrickmeenan.com/`):
+  * **Windows**: Run `npm run deploy` (or `.\deploy.ps1`). This builds the site and synchronizes via headless WSL rsync (`--delete`), or falls back to native OpenSSH `scp`.
+  * **WSL/Linux**: Run `deploy.sh` (rsync).
 
 ## Feature Implementations & Rules
 
